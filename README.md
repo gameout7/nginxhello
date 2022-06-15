@@ -1,5 +1,5 @@
 # nginxhello
 
-helm install RELIASE_NAME Chart-anazhi/
+helm install RELEASE_NAME Chart-anazhi/
 Optionaly different image may be specified by:
-helm install RELIASE_NAME Chart-anazhi/ --set image=IMAGE_NAME
+helm install RELEASE_NAME Chart-anazhi/ --set image=IMAGE_NAME
