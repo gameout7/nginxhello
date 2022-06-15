@@ -5,7 +5,7 @@ metadata:
   labels:
     app : {{ .Release.Name }}-deploy
 spec:
-  replicas : {{ .Values.replicaCount }}
+#  replicas : {{ .Values.replicaCount }}
   selector:
     matchLabels:
       project: {{ .Release.Name }}
@@ -23,5 +23,39 @@ spec:
       containers:
         - name : {{ .Release.Name }}-web
           image: {{ .Values.image }}
+          imagePullPolicy: 'IfNotPresent'
           ports:
             - containerPort: 80    
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 3
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Release.Name }}-autoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v2betav1   
+    kind: Deployment
+    name: {{ .Release.Name }}-deploy
+  minReplicas: {{ .Values.minReplicas }}
+  maxReplicas: {{ .Values.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: 80

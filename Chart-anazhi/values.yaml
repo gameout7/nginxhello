@@ -1,4 +1,6 @@
 
 image: nginxdemos/hello:latest
 
-replicaCount: 2
+#replicaCount: 2
+minReplicas: 2
+maxReplicas: 6
